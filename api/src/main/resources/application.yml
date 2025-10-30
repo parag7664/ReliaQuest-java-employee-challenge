@@ -1,0 +1,40 @@
+spring.application.name: employee-api
+server.port: 8111
+
+employee-server:
+  hostname: http://localhost:8112
+  path:
+    employee: '/api/v1/employee'
+    get-all-employees: '/api/v1/employee'
+    get-employee-by-id: '/api/v1/employee/%s'
+
+logging:
+  level:
+    root: INFO
+    com.reliaquest.api: DEBUG
+    org.springframework.web: INFO
+    reactor.netty: WARN
+
+spring:
+  webclient:
+    employee:
+      base-url: http://localhost:8112/api/v1/employee
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      employeeApi:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+  retry:
+    instances:
+      employeeApiRetry:
+        maxAttempts: 3
+        waitDuration: 200ms
